@@ -7,8 +7,12 @@ if [ "$1" == "-e" ]; then
 	code=$(cat main.cpp)
 else
 	#overwrite file with input from keyboard
-	echo -n "Paste here: "
-	code=$(cat)
+	read -s -p "Paste Canvas document preview: " code
+	while read -s -t 0.25 line
+	do
+		code+="
+$line"
+	done
 fi
 
 echo "$code" |
@@ -36,19 +40,4 @@ while ! g++ main.cpp; do
 done
 
 clear
-if cat main.cpp | grep -q 'calculateRetail('; then
-	echo -n "contains"
-else
-	echo -n "missing"
-fi
-
-echo " calculateRetail()"
-echo ""
-
-echo 50 10 | ./a.out
-echo ""
-echo ""
-
-echo -50 50 -10 10 50 50 50 50 50 | ./a.out
-echo ""
-echo ""
+./a.out
