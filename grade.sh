@@ -4,38 +4,20 @@
 # getting a new program from stdin
 if [ "$1" == "-e" ]; then
 	nano -mx main.cpp
-	code=$(cat main.cpp)
 else
 	#overwrite file with input from keyboard
-	read -s -p "Paste Canvas document preview: " code
+	read -s -p "Paste C++ code: " code
 	while read -s -t 0.25 line
 	do
 		code+="
 $line"
 	done
+	echo "$code" > main.cpp
 fi
-
-echo "$code" |
-perl -0777 -nE 'say /(#include.*})/s' |
-sed -E 's/“|”/"/g ; s/[[:<:]][Ee]lsecout[[:>:]]/else cout/g ; s/[[:<:]][Ee]lseif[[:>:]]/else if/g ; s/[[:<:]]If[[:>:]]/if/g ; s/[[:<:]]Else[[:>:]]/else/g ; s/[[:<:]]Int[[:>:]]/int/g; s/[[:<:]]Float[[:>:]]/float/g ; s/[[:<:]]Double[[:>:]]/double/g ; s/[[:<:]]Using[[:>:]]/using/g ; s/[[:<:]]Cout[[:>:]]/cout/g ; s/[[:<:]]Cin[[:>:]]/cin/g ; s/[[:<:]]Return[[:>:]]/return/g ; s/[[:<:]]While[[:>:]]/while/g ; s/[[:<:]]For[[:>:]]/for/g' |
-awk '(NR-1)%2{$1=$1}1' RS=\" ORS=\" | sed '$d' |
-sed -E 's/^ +//g' |
-sed -E -n '/^double|^float|^int|^do|^while|^return|^if|^else|\,|\!|\%|\^|\&|\*|\(|\)|\-|\=|\+|\<|\>|\?|\;|\:|\"|\{|\}|\[|\]|\\|\//p' \
-> main.cpp
-
-#remove single line comments
-#perl -pe 's;//.*?\n;;g'
-
-#remove newlines not following a > character
-#perl -pe 's;(?<!\>)\R;;g'
-#perl -pe 's/(?<![>;){}])\R//g'
-
-#remove newlines located between double quotes
-#awk '(NR-1)%2{$1=$1}1' RS=\" ORS=\" | sed '$d'
 
 # open the editor if the code contains compiler errors
 while ! g++ main.cpp; do
-	read -p "Press enter to compile again."
+	read -p "Press enter to open the editor."
 	nano -mx main.cpp
 done
 
