@@ -6,6 +6,7 @@ if [ "$1" == "-e" ]; then
 	nano -mx main.cpp
 else
 	#overwrite file with input from keyboard
+	IFS=''
 	read -s -p "Paste C++ code: " code
 	while read -s -t 0.25 line
 	do
