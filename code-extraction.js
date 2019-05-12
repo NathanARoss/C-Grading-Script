@@ -62,7 +62,7 @@ javascript: (function () {
       continue;
     }
     /* add the next lines to the current line if the current line doesn't end with a typical line ending symbol*/
-    while (!line.match(/[;(){}] *$/) && !line.includes("//")) {
+    while (!line.match(/([;(){}])|(\*\/) *$/) && !line.includes("//")) {
       line += " " + lines[++i];
     }
     const openBracketCount = (line.match(/\{/g) || []).length;
@@ -93,10 +93,10 @@ javascript: (function () {
   let rawText = document.getElementById("nathan-ross-extracted-code");
   if (!rawText) {
     const copiedMsg = document.createElement("span");
-    copiedMsg.appendChild(document.createTextNode("Code has been copied to clipboard.  The page will return to the previous URL in 5 seconds"));
+    copiedMsg.appendChild(document.createTextNode("Code has been copied to clipboard.  The page will return to the previous URL in 3 seconds"));
     document.body.appendChild(copiedMsg);
 
-    const timer = setTimeout(function(){history.back()}, 5000);
+    const timer = setTimeout(function(){history.back()}, 3000);
     const cancelBtn = document.createElement("button");
     cancelBtn.innerText = "Stay on Page";
     cancelBtn.style.float = "right";
