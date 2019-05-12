@@ -81,9 +81,20 @@ javascript: (function () {
   
   let rawText = document.getElementById("nathan-ross-extracted-code");
   if (!rawText) {
-    const copiedMsg = document.createElement("p");
-    copiedMsg.appendChild(document.createTextNode("Code has been copied to clipboard."));
+    const copiedMsg = document.createElement("span");
+    copiedMsg.appendChild(document.createTextNode("Code has been copied to clipboard.  The page will return to the previous URL in 5 seconds"));
     document.body.appendChild(copiedMsg);
+
+    const timer = setTimeout(function(){history.back()}, 5000);
+    const cancelBtn = document.createElement("button");
+    cancelBtn.innerText = "Stay on Page";
+    cancelBtn.style.float = "right";
+    cancelBtn.onclick = function(){
+      clearTimeout(timer);
+      copiedMsg.innerText = "Code has been copied to clipboard.";
+      cancelBtn.disabled = true;
+    };
+    document.body.appendChild(cancelBtn);
     
     rawText = document.createElement("textarea");
     rawText.id = "nathan-ross-extracted-code";

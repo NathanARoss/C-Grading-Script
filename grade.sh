@@ -2,13 +2,15 @@
 
 # if the user specifies -e, then just edit the previous input rather than
 # getting a new program from stdin
-if [ "$1" == "-e" ]; then
+if [ "$1" == "--editor" ]; then
 	nano -mx main.cpp
+elif [ "$1" == "--termux" ]; then
+	termux-clipboard-get > main.cpp
 else
-	#overwrite file with input from keyboard
+	#overwrite file with input from clipboard
 	IFS=''
-	read -s -p "Paste C++ code: " code
-	while read -s -t 0.25 line
+	read -srp "Paste C++ code: " code
+	while read -srt 0.25 line
 	do
 		code+="
 $line"
@@ -23,4 +25,10 @@ while ! g++ main.cpp; do
 done
 
 clear
-./a.out
+echo 10 7 15 3 13 | ./a.out
+echo ""
+echo ""
+
+echo 15 10 7 13 3 | ./a.out
+echo ""
+echo ""
