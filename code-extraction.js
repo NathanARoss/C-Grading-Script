@@ -5,25 +5,30 @@ javascript: (function () {
     var textLayer = page.getElementsByClassName("textLayer")[0];
     let highestTop = 0;
     if (textLayer.firstChild) {
-      highestTop = parseFloat(textLayer.firstChild.style.top); }
-      let line = ""; for (const node of textLayer.childNodes) {
-        const top = parseFloat(node.style.top);
-        if (top > highestTop + 10) {
-          highestTop = top;
-          documentText += line.trimStart() + '\n';
-          line = "";
-        }
-        const nodeText = node.firstChild.nodeValue.replace(/“|”/g, '"').replace(/[^\x00-\x7F]/g, "");
-        if (nodeText.length === 0) { continue; }
-        if (line.length > 0 && !line.match(/([\s({]$)|(^\s*#include\s*<)/) && !nodeText.match(/^[ )};\]]/)) {
-          line += " ";
-        } else {
-          const prevChar = !line.match(/([\s({]$)|(^\s*#include\s*<)/);
-          const firstChar = !nodeText.match(/^[ )};\]]/);
-        }
-        line += nodeText;
+      highestTop = parseFloat(textLayer.firstChild.style.top);
+    }
+    let line = "";
+    for (const node of textLayer.childNodes) {
+      const top = parseFloat(node.style.top);
+      if (top > highestTop + 5) {
+        highestTop = top;
+        documentText += line.trimStart() + '\n';
+        console.log("top:", top, "highestTop:", highestTop, "added line:", line);
+        line = "";
+      } else {
+        console.log("top:", top, "highestTop:", highestTop, line);
       }
-      documentText += line.trimStart() + '\n';
+      const nodeText = node.firstChild.nodeValue.replace(/“|”/g, '"').replace(/[^\x00-\x7F]/g, "");
+      if (nodeText.length === 0) { continue; }
+      if (line.length > 0 && !line.match(/([\s({\\]$)|(^\s*#include\s*<)/) && !nodeText.match(/^[ )};\]]/)) {
+        line += " ";
+      } else {
+        const prevChar = !line.match(/([\s({]$)|(^\s*#include\s*<)/);
+        const firstChar = !nodeText.match(/^[ )};\]]/);
+      }
+      line += nodeText;
+    }
+    documentText += line.trimStart() + '\n';
   }
   
   let code = documentText.match(/#include[\s\S]*\}/)[0];
@@ -34,6 +39,9 @@ javascript: (function () {
     return " ".repeat(level * 4);
   }
   
+
+
+
   const lines = code.split('\n');
   for (let i = 0; i < lines.length; ++i) {
     let line = lines[i];
@@ -54,8 +62,10 @@ javascript: (function () {
       continue;
     }
     /* add the next lines to the current line if the current line doesn't end with a typical line ending symbol*/
-    while (!line.match(/[;(){}] *$/)) {
-      line += " " + lines[++i];
+    if (!line.includes("//")) {
+      while (!line.match(/[;(){}] *$/)) {
+        line += " " + lines[++i];
+      }
     }
     const openBracketCount = (line.match(/\{/g) || []).length;
     let closeBracketCount = (line.match(/\}/g) || []).length;
@@ -76,6 +86,9 @@ javascript: (function () {
   }
   
   let formattedCode = formattedLines.join('\n') + "\n";
+
+
+
   
   navigator.clipboard.writeText(formattedCode);
   
@@ -95,6 +108,20 @@ javascript: (function () {
       cancelBtn.disabled = true;
     };
     document.body.appendChild(cancelBtn);
+
+    const originalViewBtn = document.createElement("button");
+    originalViewBtn.innerText = "Exit raw code view";
+    originalViewBtn.style.float = "right";
+    originalViewBtn.onclick = function(){
+      document.body.removeChild(copiedMsg);
+      document.body.removeChild(cancelBtn);
+      document.body.removeChild(originalViewBtn);
+      document.body.removeChild(rawText);
+
+      const app = document.getElementById("App");
+      app.style.visibility = "";
+    };
+    document.body.appendChild(originalViewBtn);
     
     rawText = document.createElement("textarea");
     rawText.id = "nathan-ross-extracted-code";
