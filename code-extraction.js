@@ -62,10 +62,8 @@ javascript: (function () {
       continue;
     }
     /* add the next lines to the current line if the current line doesn't end with a typical line ending symbol*/
-    if (!line.includes("//")) {
-      while (!line.match(/[;(){}] *$/)) {
-        line += " " + lines[++i];
-      }
+    while (!line.match(/[;(){}] *$/) && !line.includes("//")) {
+      line += " " + lines[++i];
     }
     const openBracketCount = (line.match(/\{/g) || []).length;
     let closeBracketCount = (line.match(/\}/g) || []).length;
