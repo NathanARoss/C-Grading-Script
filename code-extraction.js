@@ -72,7 +72,7 @@ javascript: (function () {
     }
 
     /* match comments that spill onto the next line and page headers (people's names) */
-    const appearsToBeCode = line.match(/[\#\/=;{}<>]|^ *(int|float|double|short|char|void|while|do|if|for)\b/);
+    const appearsToBeCode = line.match(/[\#\/=;{}<>+]|^ *(int|float|double|short|char|void|while|do|if|else|for)\b/);
     if (!appearsToBeCode) {
       formattedLines.push(getIndent(indentation) + "//" + line);
       continue;
