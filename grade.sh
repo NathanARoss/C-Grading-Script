@@ -6,6 +6,8 @@ if [ "$1" == "--editor" ]; then
 	nano -mx main.cpp
 elif [ "$1" == "--termux" ]; then
 	termux-clipboard-get > main.cpp
+elif [ "$1" == "--xclip" ]; then
+	xclip -o > main.cpp
 else
 	#overwrite file with input from clipboard
 	IFS=''
